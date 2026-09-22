@@ -1,0 +1,31 @@
+Sehr geehrte Damen und Herren,
+
+hiermit beantrage ich gemäß Art. 15 DSGVO Auskunft über die zu meiner Person gespeicherten Daten.
+
+Persönliche Daten
+Vorname(n)
+{{ .Vorname }}
+
+Nachname(n)
+{{ .Nachname }}
+
+Geburtsdatum
+{{ .Geburtsdatum }}
+
+Anschrift
+Straße & Nr.
+{{ .Strasse }}
+
+PLZ
+{{ .PLZ }}
+
+Wohnort
+{{ .Wohnort }}
+
+Land
+{{ .Land }}
+
+Bitte senden Sie mir die Auskunft an die oben genannte Anschrift.
+
+Mit freundlichen Grüßen
+{{ .Vorname }} {{ .Nachname }}

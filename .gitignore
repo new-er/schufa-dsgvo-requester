@@ -1,0 +1,4 @@
+config.toml
+bin/
+schufa-dsgvo-requester
+*.log
