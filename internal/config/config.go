@@ -1,10 +1,15 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/BurntSushi/toml"
+	_ "embed"
 )
+
+//go:embed config.toml.example
+var exampleConfig string
 
 type MailConfig struct {
 	SMTPHost string `toml:"smtp_host"`
@@ -89,4 +94,14 @@ func Save(path string, cfg *Config) error {
 	defer f.Close()
 	enc := toml.NewEncoder(f)
 	return enc.Encode(cfg)
+}
+
+func LoadOrCreate(path string) (*Config, error) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		if err := os.WriteFile(path, []byte(exampleConfig), 0600); err != nil {
+			return nil, err
+		}
+		fmt.Printf("Created %s from example — please edit it\n", path)
+	}
+	return Load(path)
 }

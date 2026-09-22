@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/new-er/schufa-dsgvo-requester/internal/config"
 	"github.com/new-er/schufa-dsgvo-requester/internal/logger"
@@ -31,6 +32,12 @@ func main() {
 	tuiMode := flag.Bool("tui", false, "Start interactive TUI")
 	flag.Parse()
 
+	// Ensure config exists (creates from embedded example if missing)
+	cfgPath := configPath()
+	if _, err := config.LoadOrCreate(cfgPath); err != nil {
+		log.Fatalf("config error: %v", err)
+	}
+
 	// Default to TUI when no explicit flags given
 	if !*dryRun && !*tuiMode && len(os.Args) == 1 {
 		if err := tui.Run(); err != nil {
@@ -38,8 +45,7 @@ func main() {
 		}
 		return
 	}
-
-	cfg, err := config.Load("config.toml")
+	cfg, err := config.LoadOrCreate(cfgPath)
 	if err != nil {
 		log.Fatalf("config error: %v", err)
 	}
@@ -50,7 +56,7 @@ func main() {
 	}
 	defer logger.Close()
 
-	body, err := template.Render(cfg, "config.toml")
+	body, err := template.Render(cfg, cfgPath)
 	if err != nil {
 		log.Fatalf("template error: %v", err)
 	}
@@ -82,13 +88,19 @@ func main() {
 	)
 }
 
+func configPath() string {
+	bin, _ := os.Executable()
+	return filepath.Join(filepath.Dir(bin), "config.toml")
+}
+
 func runInstallSystemd() {
-	cfg, err := config.Load("config.toml")
+	cfgPath := configPath()
+	cfg, err := config.LoadOrCreate(cfgPath)
 	if err != nil {
 		log.Fatalf("config error: %v", err)
 	}
 	binPath, _ := os.Executable()
-	if err := scheduler.InstallSystemd(cfg, binPath, "config.toml"); err != nil {
+	if err := scheduler.InstallSystemd(cfg, binPath, cfgPath); err != nil {
 		log.Fatalf("install error: %v", err)
 	}
 	fmt.Println("Systemd timer installed")

@@ -17,34 +17,29 @@ Sends a GDPR (DSGVO) Art. 15 data access request to SCHUFA via email on a recurr
 ## Features
 
 - **Automated scheduling** — runs every 3 months (configurable) via systemd timer
-- **Interactive TUI** — configure everything in a terminal UI (`--tui`)
+- **Interactive TUI** — runs by default (no flags), configure and send from terminal
 - **Dry-run mode** — preview the email before sending (`--dry-run`)
 - **Systemd integration** — `install-systemd` / `uninstall-systemd` commands
+- **Auto-config creation** — generates `config.toml` from embedded example on first run
 - **Secure config** — validates file permissions (must be `0600`)
 - **Structured logging** — JSON logs to `~/.local/share/schufa-dsgvo-requester/logs/`
 
-## Quick Start
+## Install
 
 ```bash
-# 1. Build
-go build -o schufa-dsgvo-requester
-
-# 2. Copy example config and edit
-cp config.toml.example config.toml
-chmod 600 config.toml
-$EDITOR config.toml
-
-# 3. Test (prints email to stdout)
-./schufa-dsgvo-requester --dry-run
-
-# 4. Run once manually
-./schufa-dsgvo-requester
-
-# 5. Or install systemd timer for automatic quarterly runs
-sudo ./schufa-dsgvo-requester install-systemd
+go install github.com/new-er/schufa-dsgvo-requester@latest
 ```
 
-## Configuration
+## Usage
+
+```bash
+schufa-dsgvo-requester              # opens TUI → configure → send once or install recurring schedule
+schufa-dsgvo-requester --dry-run    # preview email without sending
+schufa-dsgvo-requester install-systemd
+schufa-dsgvo-requester uninstall-systemd
+```
+
+## Config (auto-created on first run next to binary)
 
 Edit `config.toml` (must be `chmod 600`):
 
@@ -88,38 +83,20 @@ interval_months = 3
 | `personal` | `land` | Country |
 | `schedule` | `interval_months` | Interval in months (default: 3) |
 
-## CLI Reference
-
-```bash
-schufa-dsgvo-requester [flags]
-
-Flags:
-  --dry-run    Print rendered email to stdout instead of sending
-  --tui        Start interactive terminal UI (default when no flags)
-
-Commands:
-  install-systemd    Install systemd service + timer (requires pkexec/sudo)
-  uninstall-systemd  Remove systemd service + timer
-```
-
-### Default behavior
-
-Running without flags launches the **TUI**. Use `--dry-run` for cron/non-interactive use.
-
-## Systemd Timer
+## Recurring Schedule
 
 The timer runs on the 1st of every N months at 09:00 (with ±1h randomization):
 
 ```bash
 # Install (creates /etc/systemd/system/schufa-dsgvo.{service,timer})
-./schufa-dsgvo-requester install-systemd
+schufa-dsgvo-requester install-systemd
 
 # Check status
 systemctl status schufa-dsgvo.timer
 journalctl -u schufa-dsgvo.service -f
 
 # Uninstall
-./schufa-dsgvo-requester uninstall-systemd
+schufa-dsgvo-requester uninstall-systemd
 ```
 
 ## Logs
@@ -148,10 +125,10 @@ Vorname(n)
 
 ## Requirements
 
-- Go 1.24+
-- SMTP account with STARTTLS support (port 587)
-- Linux with systemd (for timer feature)
-- `pkexec` or `sudo` for systemd install
+- Linux with systemd (for recurring schedule)
+- SMTP with STARTTLS (port 587)
+- `pkexec` or `sudo` for install-systemd
+- Go 1.24+ (only for building from source)
 
 ## License
 
