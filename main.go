@@ -29,7 +29,6 @@ func main() {
 	}
 
 	dryRun := flag.Bool("dry-run", false, "Print mail instead of sending")
-	tuiMode := flag.Bool("tui", false, "Start interactive TUI")
 	flag.Parse()
 
 	// Ensure config exists (creates from embedded example if missing)
@@ -39,8 +38,8 @@ func main() {
 	}
 
 	// Default to TUI when no explicit flags given
-	if !*dryRun && !*tuiMode && len(os.Args) == 1 {
-		if err := tui.Run(); err != nil {
+	if !*dryRun && len(os.Args) == 1 {
+		if err := tui.Run(cfgPath); err != nil {
 			log.Fatalf("tui error: %v", err)
 		}
 		return

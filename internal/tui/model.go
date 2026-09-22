@@ -29,9 +29,8 @@ type Model struct {
 	width       int
 }
 
-func InitialModel() (*Model, error) {
-	configPath := "config.toml"
-	cfg, err := config.Load(configPath)
+func InitialModel(configPath string) (*Model, error) {
+	cfg, err := config.LoadOrCreate(configPath)
 	if err != nil {
 		return nil, err
 	}

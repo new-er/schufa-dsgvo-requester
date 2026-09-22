@@ -5,8 +5,8 @@ import (
 	"github.com/new-er/schufa-dsgvo-requester/internal/logger"
 )
 
-// Run starts the Bubble Tea program.
-func Run() error {
+// Run starts the Bubble Tea program with the given config path.
+func Run(configPath string) error {
 	logDir := logger.DefaultLogDir()
 	if err := logger.Init(logDir); err != nil {
 		return err
@@ -21,7 +21,7 @@ func Run() error {
 		logger.Close()
 	}()
 
-	m, err := InitialModel()
+	m, err := InitialModel(configPath)
 	if err != nil {
 		return err
 	}
