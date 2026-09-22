@@ -7,7 +7,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/bubbles/viewport"
-	"github.com/youruser/schufa-dsgvo-requester/internal/logger"
+	"github.com/new-er/schufa-dsgvo-requester/internal/logger"
 )
 
 type tickMsg time.Time

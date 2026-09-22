@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/youruser/schufa-dsgvo-requester/internal/config"
+	"github.com/new-er/schufa-dsgvo-requester/internal/config"
 )
 
 //go:embed mail.txt

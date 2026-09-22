@@ -2,7 +2,7 @@ package tui
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/youruser/schufa-dsgvo-requester/internal/logger"
+	"github.com/new-er/schufa-dsgvo-requester/internal/logger"
 )
 
 // Run starts the Bubble Tea program.

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/smtp"
 
-	"github.com/youruser/schufa-dsgvo-requester/internal/config"
+	"github.com/new-er/schufa-dsgvo-requester/internal/config"
 )
 
 func Send(cfg *config.Config, subject, body string) error {

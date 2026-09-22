@@ -8,11 +8,11 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/youruser/schufa-dsgvo-requester/internal/config"
-	"github.com/youruser/schufa-dsgvo-requester/internal/mailer"
-	"github.com/youruser/schufa-dsgvo-requester/internal/scheduler"
-	"github.com/youruser/schufa-dsgvo-requester/internal/template"
-	"github.com/youruser/schufa-dsgvo-requester/internal/tui/tabs"
+	"github.com/new-er/schufa-dsgvo-requester/internal/config"
+	"github.com/new-er/schufa-dsgvo-requester/internal/mailer"
+	"github.com/new-er/schufa-dsgvo-requester/internal/scheduler"
+	"github.com/new-er/schufa-dsgvo-requester/internal/template"
+	"github.com/new-er/schufa-dsgvo-requester/internal/tui/tabs"
 )
 
 type Model struct {

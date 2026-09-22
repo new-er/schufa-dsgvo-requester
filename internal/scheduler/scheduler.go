@@ -8,7 +8,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/youruser/schufa-dsgvo-requester/internal/config"
+	"github.com/new-er/schufa-dsgvo-requester/internal/config"
 )
 
 const systemdServiceTmpl = `[Unit]

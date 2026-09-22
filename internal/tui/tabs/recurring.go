@@ -11,9 +11,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/youruser/schufa-dsgvo-requester/internal/config"
-	"github.com/youruser/schufa-dsgvo-requester/internal/logger"
-	"github.com/youruser/schufa-dsgvo-requester/internal/scheduler"
+	"github.com/new-er/schufa-dsgvo-requester/internal/config"
+	"github.com/new-er/schufa-dsgvo-requester/internal/logger"
+	"github.com/new-er/schufa-dsgvo-requester/internal/scheduler"
 )
 
 // RecurringTab allows setting interval months and installing/uninstalling systemd timer.

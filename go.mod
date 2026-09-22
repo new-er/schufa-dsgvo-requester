@@ -1,4 +1,4 @@
-module github.com/youruser/schufa-dsgvo-requester
+module github.com/new-er/schufa-dsgvo-requester
 
 go 1.24.2
 

@@ -8,9 +8,9 @@ import (
 	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/viewport"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/youruser/schufa-dsgvo-requester/internal/config"
-	"github.com/youruser/schufa-dsgvo-requester/internal/logger"
-	"github.com/youruser/schufa-dsgvo-requester/internal/template"
+	"github.com/new-er/schufa-dsgvo-requester/internal/config"
+	"github.com/new-er/schufa-dsgvo-requester/internal/logger"
+	"github.com/new-er/schufa-dsgvo-requester/internal/template"
 )
 
 type MessageTab struct {
