@@ -15,11 +15,13 @@ const FIELDS = [
   "land",
   "interval_months",
 ];
+const RECIPIENTS = ["to_addr", "cc_addr", "bcc_addr"];
+const ALL_FIELDS = FIELDS.concat(RECIPIENTS);
 const SETTINGS = ["notify_enabled", "notify_repeat"];
 
 function readForm() {
   const data = {};
-  for (const name of FIELDS) {
+  for (const name of ALL_FIELDS) {
     const value = form.elements[name].value;
     data[name] = name === "interval_months" ? Number(value) : value;
   }
@@ -27,7 +29,7 @@ function readForm() {
 }
 
 function fillForm(data) {
-  for (const name of FIELDS) {
+  for (const name of ALL_FIELDS) {
     if (data[name] !== undefined) form.elements[name].value = data[name];
   }
 }
@@ -67,9 +69,11 @@ form.addEventListener("submit", async (event) => {
 
 async function init() {
   const data = await api.storage.local.get(
-    FIELDS.concat(["last_sent"]).concat(SETTINGS),
+    ALL_FIELDS.concat(["last_sent"]).concat(SETTINGS),
   );
   fillForm(data);
+  form.elements.to_addr.value =
+    data.to_addr || globalThis.schufa?.DEFAULT_TO || "info@schufa.de";
   showDue(data);
   notifyEnabled.checked = data.notify_enabled ?? true;
   notifyRepeat.value = data.notify_repeat ?? "once";

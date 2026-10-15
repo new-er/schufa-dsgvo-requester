@@ -1,7 +1,9 @@
 const assert = require("node:assert");
 require("./letter.js");
 
-const { nextDueDate, renderLetter, mailtoUrl } = globalThis.schufa;
+const { DEFAULT_TO, nextDueDate, renderLetter, recipients, mailtoUrl } = globalThis.schufa;
+
+assert.strictEqual(DEFAULT_TO, "info@schufa.de");
 
 const last = "2026-01-15T09:00:00Z";
 const due = nextDueDate(last, 3);
@@ -22,7 +24,30 @@ assert.match(letter, /Art\. 15 DSGVO/);
 assert.match(letter, /Max Mustermann$/);
 
 const url = mailtoUrl({ vorname: "Max", nachname: "Mustermann" });
-assert.ok(url.startsWith("mailto:info@schufa.de?"));
+assert.ok(url.startsWith("mailto:info@schufa.de?"), "default recipient");
 assert.ok(url.includes("body="));
+assert.ok(!url.includes("cc="), "no cc by default");
+assert.ok(!url.includes("bcc="), "no bcc by default");
+
+assert.deepStrictEqual(recipients({}), { to: ["info@schufa.de"], cc: [], bcc: [] });
+assert.deepStrictEqual(recipients({ to_addr: " a@b.de , c@d.de " }), {
+  to: ["a@b.de", "c@d.de"],
+  cc: [],
+  bcc: [],
+});
+
+const custom = mailtoUrl({
+  vorname: "Max",
+  to_addr: "schufa@example.de, second@example.de",
+  cc_addr: "me@example.com",
+  bcc_addr: "archive@example.com",
+});
+assert.ok(custom.startsWith("mailto:schufa@example.de,second@example.de?"), "custom to list");
+assert.ok(custom.includes("cc=me@example.com"), "cc kept");
+assert.ok(custom.includes("bcc=archive@example.com"), "bcc kept");
+
+const spaced = mailtoUrl({ vorname: "Max", to_addr: "Max Mustermann <max@example.com>" });
+assert.ok(spaced.includes("%20"), "spaces encoded as %20");
+assert.ok(!spaced.includes("+subject"), "no plus-encoding for spaces");
 
 console.log("letter.test.js: all assertions passed");

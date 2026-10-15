@@ -16,6 +16,7 @@
     .inline input { width: auto; }
     button { padding: 8px 18px; cursor: pointer; }
     .status { margin-top: 12px; color: #555; }
+    .hint { color: #777; margin: -6px 0 12px; }
   </style>
 </head>
 <body>
@@ -31,6 +32,12 @@
     </div>
     <label><span>Land</span><input name="land" required></label>
     <label><span>Intervall (Monate)</span><input name="interval_months" type="number" min="1" value="3" required></label>
+
+    <h2>Empfänger</h2>
+    <label><span>An</span><input name="to_addr"></label>
+    <label><span>CC (optional)</span><input name="cc_addr"></label>
+    <label><span>BCC (optional)</span><input name="bcc_addr"></label>
+    <p class="hint">Mehrere Adressen mit Komma trennen.</p>
 
     <h2>Benachrichtigungen</h2>
     <label class="inline"><input type="checkbox" id="notify_enabled" checked> Erinnerung anzeigen</label>
