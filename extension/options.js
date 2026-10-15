@@ -2,6 +2,7 @@ const api = globalThis.browser ?? chrome;
 
 const form = document.getElementById("form");
 const statusEl = document.getElementById("status");
+const dueEl = document.getElementById("due");
 const notifyEnabled = document.getElementById("notify_enabled");
 const notifyRepeat = document.getElementById("notify_repeat");
 const prevEnabled = document.getElementById("prev_enabled");
@@ -69,10 +70,16 @@ function showDue(data) {
     data.last_sent && globalThis.schufa
       ? globalThis.schufa.nextDueDate(data.last_sent, data.interval_months)
       : null;
-  statusEl.textContent = due
+  dueEl.textContent = due
     ? `Letzte Anfrage: ${new Date(data.last_sent).toLocaleDateString("de-DE")} · nächste: ${due.toLocaleDateString("de-DE")}`
     : "Noch keine Anfrage gesendet.";
 }
+
+api.storage.onChanged.addListener((changes, area) => {
+  if (area !== "local") return;
+  if (!("last_sent" in changes || "next_due" in changes)) return;
+  api.storage.local.get(FIELDS.concat(["last_sent"])).then(showDue).catch(fail);
+});
 
 function fail(err) {
   console.error(err);
@@ -83,8 +90,7 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
     await api.storage.local.set({ ...readForm(), ...readSettings() });
-    showDue(await api.storage.local.get(FIELDS.concat(["last_sent"])));
-    statusEl.textContent = "Gespeichert ✓ " + statusEl.textContent;
+    statusEl.textContent = "Gespeichert ✓";
   } catch (err) {
     fail(err);
   }
