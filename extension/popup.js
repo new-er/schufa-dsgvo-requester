@@ -1,8 +1,7 @@
 const api = globalThis.browser ?? chrome;
-const { nextDueDate, requestViaMailto } = schufa;
 
 const form = document.getElementById("form");
-const status = document.getElementById("status");
+const statusEl = document.getElementById("status");
 
 const FIELDS = [
   "vorname",
@@ -31,27 +30,47 @@ function fillForm(data) {
 }
 
 function showDue(data) {
-  const due = data.last_sent ? nextDueDate(data.last_sent, data.interval_months) : null;
-  status.textContent = due
+  const due =
+    data.last_sent && globalThis.schufa
+      ? globalThis.schufa.nextDueDate(data.last_sent, data.interval_months)
+      : null;
+  statusEl.textContent = due
     ? `Letzte Anfrage: ${new Date(data.last_sent).toLocaleDateString("de-DE")} · nächste: ${due.toLocaleDateString("de-DE")}`
     : "Noch keine Anfrage gesendet.";
 }
 
-api.storage.local.get(FIELDS.concat(["last_sent"])).then((data) => {
-  fillForm(data);
-  showDue(data);
-});
+function fail(err) {
+  console.error(err);
+  statusEl.textContent = "Fehler: " + (err?.message ?? err);
+}
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  await api.storage.local.set(readForm());
-  const data = await api.storage.local.get(FIELDS.concat(["last_sent"]));
-  showDue(data);
-  status.textContent = "Gespeichert. " + status.textContent;
+  try {
+    const data = readForm();
+    await api.storage.local.set(data);
+    showDue(await api.storage.local.get(FIELDS.concat(["last_sent"])));
+    statusEl.textContent = "Gespeichert ✓ " + statusEl.textContent;
+  } catch (err) {
+    fail(err);
+  }
 });
 
 document.getElementById("open").addEventListener("click", async () => {
-  const data = readForm();
-  await api.storage.local.set(data);
-  await requestViaMailto(api, data);
+  try {
+    if (!globalThis.schufa) throw new Error("letter.js nicht geladen");
+    const data = readForm();
+    await api.storage.local.set(data);
+    await globalThis.schufa.requestViaMailto(api, data);
+  } catch (err) {
+    fail(err);
+  }
 });
+
+async function init() {
+  const data = await api.storage.local.get(FIELDS.concat(["last_sent"]));
+  fillForm(data);
+  showDue(data);
+}
+
+init().catch(fail);
