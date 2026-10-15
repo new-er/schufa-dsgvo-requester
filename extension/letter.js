@@ -9,6 +9,23 @@ function nextDueDate(lastSent, intervalMonths) {
   return monthsFrom(lastSent, intervalMonths);
 }
 
+function previousAddress(data) {
+  const fields = ["prev_strasse", "prev_plz", "prev_wohnort", "prev_land"];
+  if (!data.prev_enabled || !fields.every((key) => data[key])) return "";
+  return `\n\nVorherige Anschrift
+Straße & Nr.
+${data.prev_strasse}
+
+PLZ
+${data.prev_plz}
+
+Wohnort
+${data.prev_wohnort}
+
+Land
+${data.prev_land}`;
+}
+
 function renderLetter(data) {
   return `Sehr geehrte Damen und Herren,
 
@@ -35,7 +52,7 @@ Wohnort
 ${data.wohnort}
 
 Land
-${data.land}
+${data.land}${previousAddress(data)}
 
 Bitte senden Sie mir die Auskunft an die oben genannte Anschrift.
 

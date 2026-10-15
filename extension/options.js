@@ -4,6 +4,18 @@ const form = document.getElementById("form");
 const statusEl = document.getElementById("status");
 const notifyEnabled = document.getElementById("notify_enabled");
 const notifyRepeat = document.getElementById("notify_repeat");
+const prevEnabled = document.getElementById("prev_enabled");
+
+const DEMO = new URLSearchParams(location.search).has("demo");
+const DEMO_DATA = {
+  vorname: "Max",
+  nachname: "Mustermann",
+  geburtsdatum: "04.04.2000",
+  strasse: "Musterstraße 12",
+  plz: "12345",
+  wohnort: "Musterstadt",
+  land: "Deutschland",
+};
 
 const FIELDS = [
   "vorname",
@@ -15,9 +27,10 @@ const FIELDS = [
   "land",
   "interval_months",
 ];
+const PREV_FIELDS = ["prev_strasse", "prev_plz", "prev_wohnort", "prev_land"];
 const RECIPIENTS = ["to_addr", "cc_addr", "bcc_addr"];
-const ALL_FIELDS = FIELDS.concat(RECIPIENTS);
-const SETTINGS = ["notify_enabled", "notify_repeat"];
+const ALL_FIELDS = FIELDS.concat(PREV_FIELDS, RECIPIENTS);
+const SETTINGS = ["notify_enabled", "notify_repeat", "prev_enabled"];
 
 function readForm() {
   const data = {};
@@ -38,8 +51,18 @@ function readSettings() {
   return {
     notify_enabled: notifyEnabled.checked,
     notify_repeat: notifyRepeat.value,
+    prev_enabled: prevEnabled.checked,
   };
 }
+
+function togglePrev() {
+  for (const name of PREV_FIELDS) {
+    form.elements[name].disabled = !prevEnabled.checked;
+    form.elements[name].required = prevEnabled.checked;
+  }
+}
+
+prevEnabled.addEventListener("change", togglePrev);
 
 function showDue(data) {
   const due =
@@ -72,11 +95,18 @@ async function init() {
     ALL_FIELDS.concat(["last_sent"]).concat(SETTINGS),
   );
   fillForm(data);
+  if (DEMO) {
+    for (const [name, value] of Object.entries(DEMO_DATA)) {
+      if (!form.elements[name].value) form.elements[name].value = value;
+    }
+  }
   form.elements.to_addr.value =
     data.to_addr || globalThis.schufa?.DEFAULT_TO || "info@schufa.de";
   showDue(data);
   notifyEnabled.checked = data.notify_enabled ?? true;
   notifyRepeat.value = data.notify_repeat ?? "once";
+  prevEnabled.checked = data.prev_enabled ?? false;
+  togglePrev();
 }
 
 init().catch(fail);

@@ -33,6 +33,15 @@
     <label><span>Land</span><input name="land" required></label>
     <label><span>Intervall (Monate)</span><input name="interval_months" type="number" min="1" value="3" required></label>
 
+    <h2>Vorherige Anschrift</h2>
+    <label class="inline"><input type="checkbox" id="prev_enabled"> Vorherige Anschrift angeben</label>
+    <label><span>Straße &amp; Nr.</span><input name="prev_strasse" disabled></label>
+    <div class="row">
+      <label><span>PLZ</span><input name="prev_plz" disabled></label>
+      <label><span>Wohnort</span><input name="prev_wohnort" disabled></label>
+    </div>
+    <label><span>Land</span><input name="prev_land" disabled></label>
+
     <h2>Empfänger</h2>
     <label><span>An</span><input name="to_addr"></label>
     <label><span>CC (optional)</span><input name="cc_addr"></label>

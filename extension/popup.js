@@ -1,17 +1,28 @@
 const api = globalThis.browser ?? chrome;
 
 const statusEl = document.getElementById("status");
+const openBtn = document.getElementById("open");
+
+const REQUIRED = [
+  "vorname",
+  "nachname",
+  "geburtsdatum",
+  "strasse",
+  "plz",
+  "wohnort",
+  "land",
+];
 
 function fail(err) {
   console.error(err);
   statusEl.textContent = "Fehler: " + (err?.message ?? err);
 }
 
-document.getElementById("open").addEventListener("click", async () => {
+openBtn.addEventListener("click", async () => {
   try {
     const data = await api.storage.local.get(null);
-    if (!data.vorname) {
-      statusEl.textContent = "Bitte zuerst Daten in den Einstellungen speichern.";
+    if (!REQUIRED.every((key) => data[key])) {
+      statusEl.textContent = "Bitte zuerst Name, Adresse usw. in den Einstellungen speichern.";
       return;
     }
     if (!globalThis.schufa) throw new Error("letter.js nicht geladen");
@@ -26,11 +37,13 @@ document.getElementById("settings").addEventListener("click", () => {
 });
 
 async function init() {
-  const data = await api.storage.local.get(["vorname", "last_sent", "next_due"]);
-  if (!data.vorname) {
-    statusEl.textContent = "Noch keine Daten gespeichert.";
+  const data = await api.storage.local.get(REQUIRED.concat(["last_sent", "next_due"]));
+  if (!REQUIRED.every((key) => data[key])) {
+    openBtn.disabled = true;
+    statusEl.textContent = "Bitte zuerst Name, Adresse usw. in den Einstellungen speichern.";
     return;
   }
+  openBtn.disabled = false;
   statusEl.textContent = data.next_due
     ? "Nächste Anfrage fällig: " + new Date(data.next_due).toLocaleDateString("de-DE")
     : "Noch keine Anfrage gesendet.";
