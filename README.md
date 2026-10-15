@@ -1,135 +1,48 @@
-# SCHUFA DSGVO Requester
+# SCHUFA DSGVO Requester (Browser Extension)
 
-## Motivation
-
-I love SCHUFA, and as a Programmer, I love automating things.
-
-I also appreciate the classic German way of receiving information: by letter.
-
-This project simply brings these passions together by requesting my SCHUFA Datenkopie automatically every three months.
-
----
+Browser extension (Firefox + Chrome, Manifest V3) that requests your SCHUFA data copy under Art. 15 DSGVO by opening a prefilled email to `info@schufa.de`, and reminds you when the next request is due.
 
 ## What it does
 
-Sends a GDPR (DSGVO) Art. 15 data access request to SCHUFA via email on a recurring schedule. The request includes your personal details and asks SCHUFA to send the data copy by post to your address.
-
-## Features
-
-- **Automated scheduling** — runs every 3 months (configurable) via systemd timer
-- **Interactive TUI** — runs by default (no flags), configure and send from terminal
-- **Dry-run mode** — preview the email before sending (`--dry-run`)
-- **Systemd integration** — `install-systemd` / `uninstall-systemd` commands
-- **Auto-config creation** — generates `config.toml` from embedded example on first run
-- **Secure config** — validates file permissions (must be `0600`)
-- **Structured logging** — JSON logs to `~/.local/share/schufa-dsgvo-requester/logs/`
+- Stores your personal data (name, birth date, address) in the browser's local storage — nothing leaves the browser
+- "E-Mail öffnen" opens your default mail client with subject and letter body prefilled
+- Schedules a recurring reminder (default: every 3 months) via `browser.alarms`; when due, a notification opens a compose page with the ready-to-send letter
 
 ## Install
 
-```bash
-go install github.com/new-er/schufa-dsgvo-requester@latest
-```
+### Firefox
+
+1. Open `about:debugging#/runtime/this-firefox`
+2. Click "Load Temporary Add-on…" and pick `extension/manifest.json`
+
+### Chrome
+
+1. Open `chrome://extensions`
+2. Enable "Developer mode"
+3. "Load unpacked" and select the `extension/` folder
 
 ## Usage
 
-```bash
-schufa-dsgvo-requester              # opens TUI → configure → send once or install recurring schedule
-schufa-dsgvo-requester --dry-run    # preview email without sending
-schufa-dsgvo-requester install-systemd
-schufa-dsgvo-requester uninstall-systemd
-```
+1. Open the extension popup and fill in your personal data + interval, hit **Speichern**
+2. Hit **E-Mail öffnen** — your mail client opens with the letter to `info@schufa.de`
+3. Send it; the extension records the date and schedules the next reminder
 
-## Config (auto-created on first run next to binary)
+## Files
 
-Edit `config.toml` (must be `chmod 600`):
+| File | Purpose |
+|------|---------|
+| `manifest.json` | MV3 manifest, works in Firefox and Chrome (no build step) |
+| `popup.html` / `popup.js` | config form + "open email" action |
+| `letter.js` | letter template + mailto/schedule helpers |
+| `compose.html` / `compose.js` | letter view opened by the reminder notification |
+| `background.js` | alarm + notification handling |
+| `letter.test.js` | self-check: `node letter.test.js` |
 
-```toml
-[mail]
-smtp_host = "smtp.example.com"
-smtp_port = 587
-username  = "your@email.com"
-password  = "app-password"
-from_addr = "your@email.com"
-to_addr   = "info@schufa.de"
-
-[personal]
-vorname      = "Max"
-nachname     = "Mustermann"
-geburtsdatum = "04.04.2000"
-strasse      = "Musterstraße 12"
-plz          = "12345"
-wohnort      = "Musterstadt"
-land         = "Deutschland"
-
-[schedule]
-interval_months = 3
-# last_sent = "2026-01-15T09:00:00Z"  # set automatically after first send
-```
-
-| Section | Key | Description |
-|---------|-----|-------------|
-| `mail` | `smtp_host` | SMTP server hostname |
-| `mail` | `smtp_port` | SMTP port (usually 587 for STARTTLS) |
-| `mail` | `username` | SMTP username |
-| `mail` | `password` | SMTP password / app password |
-| `mail` | `from_addr` | Sender email address |
-| `mail` | `to_addr` | Recipient (SCHUFA: `info@schufa.de`) |
-| `personal` | `vorname` | First name |
-| `personal` | `nachname` | Last name |
-| `personal` | `geburtsdatum` | Birth date (DD.MM.YYYY) |
-| `personal` | `strasse` | Street + number |
-| `personal` | `plz` | Postal code |
-| `personal` | `wohnort` | City |
-| `personal` | `land` | Country |
-| `schedule` | `interval_months` | Interval in months (default: 3) |
-
-## Recurring Schedule
-
-The timer runs on the 1st of every N months at 09:00 (with ±1h randomization):
+## Development
 
 ```bash
-# Install (creates /etc/systemd/system/schufa-dsgvo.{service,timer})
-schufa-dsgvo-requester install-systemd
-
-# Check status
-systemctl status schufa-dsgvo.timer
-journalctl -u schufa-dsgvo.service -f
-
-# Uninstall
-schufa-dsgvo-requester uninstall-systemd
+node letter.test.js           # run self-checks
+npx web-ext lint -s .         # validate for Firefox
 ```
 
-## Logs
-
-Structured JSON logs at `~/.local/share/schufa-dsgvo-requester/logs/schufa.log`:
-
-```json
-{"level":"info","event":"scheduled_run_start","trigger":"cron","time":"2026-01-01T09:00:00Z"}
-{"level":"info","event":"scheduled_run_finished","trigger":"cron","result":"ok","time":"2026-01-01T09:00:02Z"}
-```
-
-## Email Template
-
-The sent email uses `internal/template/mail.txt` (Go template):
-
-```
-Sehr geehrte Damen und Herren,
-
-hiermit beantrage ich gemäß Art. 15 DSGVO Auskunft über die zu meiner Person gespeicherten Daten.
-
-Persönliche Daten
-Vorname(n)
-{{ .Vorname }}
-...
-```
-
-## Requirements
-
-- Linux with systemd (for recurring schedule)
-- SMTP with STARTTLS (port 587)
-- `pkexec` or `sudo` for install-systemd
-- Go 1.24+ (only for building from source)
-
-## License
-
-MIT
+The old Go CLI lives in `go/` during the refactor.

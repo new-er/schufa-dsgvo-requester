@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>SCHUFA DSGVO Requester</title>
+  <style>
+    body { font: 13px/1.4 system-ui, sans-serif; width: 320px; margin: 0; padding: 12px; }
+    h1 { font-size: 14px; margin: 0 0 10px; }
+    label { display: block; margin-bottom: 8px; }
+    label span { display: block; color: #555; }
+    input { width: 100%; box-sizing: border-box; padding: 3px; }
+    .row { display: flex; gap: 8px; }
+    .row label { flex: 1; }
+    .actions { display: flex; gap: 8px; margin-top: 10px; }
+    button { flex: 1; padding: 6px; cursor: pointer; }
+    .status { margin-top: 8px; color: #555; }
+    #open { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>SCHUFA DSGVO Auskunftsersuchen</h1>
+  <form id="form">
+    <label><span>Vorname(n)</span><input name="vorname" required></label>
+    <label><span>Nachname(n)</span><input name="nachname" required></label>
+    <label><span>Geburtsdatum (TT.MM.JJJJ)</span><input name="geburtsdatum" required></label>
+    <label><span>Straße &amp; Nr.</span><input name="strasse" required></label>
+    <div class="row">
+      <label><span>PLZ</span><input name="plz" required></label>
+      <label><span>Wohnort</span><input name="wohnort" required></label>
+    </div>
+    <label><span>Land</span><input name="land" required></label>
+    <label><span>Intervall (Monate)</span><input name="interval_months" type="number" min="1" value="3" required></label>
+    <div class="actions">
+      <button type="submit">Speichern</button>
+      <button type="button" id="open">E-Mail öffnen</button>
+    </div>
+  </form>
+  <div class="status" id="status"></div>
+  <script src="letter.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
