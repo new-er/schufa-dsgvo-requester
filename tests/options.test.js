@@ -1,9 +1,9 @@
 const assert = require("node:assert");
 const path = require("node:path");
 
-require("../extension/letter.js");
+require("../letter.js");
 
-const OPTIONS = path.join(__dirname, "..", "extension", "options.js");
+const OPTIONS = path.join(__dirname, "..", "options.js");
 
 const FIELD_NAMES = [
   "vorname",

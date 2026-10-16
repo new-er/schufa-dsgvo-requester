@@ -1,5 +1,2 @@
-config.toml
-bin/
-schufa-dsgvo-requester
 *.log
 web-ext-artifacts/

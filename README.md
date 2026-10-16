@@ -17,13 +17,13 @@ Browser extension (Firefox + Chrome, Manifest V3) that requests your SCHUFA data
 ### Firefox
 
 1. Open `about:debugging#/runtime/this-firefox`
-2. Click "Load Temporary Add-on…" and pick `extension/manifest.json`
+2. Click "Load Temporary Add-on…" and pick `manifest.json`
 
 ### Chrome
 
 1. Open `chrome://extensions`
 2. Enable "Developer mode"
-3. "Load unpacked" and select the `extension/` folder
+3. "Load unpacked" and select the repository root folder
 
 ## Usage
 
@@ -49,9 +49,8 @@ Browser extension (Firefox + Chrome, Manifest V3) that requests your SCHUFA data
 node tests/letter.test.js       # letter/date/mailto self-checks
 node tests/background.test.js   # alarm scheduling self-checks
 node tests/options.test.js      # settings persistence self-checks
-npx web-ext lint -s extension   # validate for Firefox
+npx web-ext lint -s .           # validate for Firefox
 ```
 
 Open the options page with a `?demo` query string to seed empty fields with sample data (e.g. from the extension console: `browser.tabs.create({ url: browser.runtime.getURL("options.html?demo") })`).
 
-The old Go CLI lives in `go/` during the refactor.

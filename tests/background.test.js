@@ -23,7 +23,7 @@ globalThis.browser = {
   tabs: { create: () => {} },
 };
 
-require("../extension/background.js");
+require("../background.js");
 
 async function resync(changes) {
   listeners.storage(changes, "local");

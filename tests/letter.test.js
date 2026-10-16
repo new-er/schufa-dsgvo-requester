@@ -1,5 +1,5 @@
 const assert = require("node:assert");
-require("../extension/letter.js");
+require("../letter.js");
 
 const { DEFAULT_TO, nextDueDate, renderLetter, recipients, mailtoUrl } = globalThis.schufa;
 
