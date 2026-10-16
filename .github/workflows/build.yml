@@ -7,33 +7,23 @@ on:
     branches: [main]
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
-
   build:
-    needs: lint
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chrome, firefox]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: npm
-      - run: npm ci
-      - run: npm run build:${{ matrix.browser }}
+      - name: Tests
+        run: |
+          node tests/letter.test.js
+          node tests/background.test.js
+          node tests/options.test.js
+      - name: Lint
+        run: npx --yes web-ext lint
+      - name: Build
+        run: npx --yes web-ext build
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.browser }}-extension
-          path: dist/${{ matrix.browser }}/
-
+          name: extension
+          path: web-ext-artifacts/
