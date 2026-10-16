@@ -21,9 +21,18 @@ jobs:
           node tests/options.test.js
       - name: Lint
         run: npx --yes web-ext lint
-      - name: Build
-        run: npx --yes web-ext build
+      # keep in sync with the files the manifest references
       - uses: actions/upload-artifact@v4
         with:
           name: extension
-          path: web-ext-artifacts/*.zip
+          path: |
+            manifest.json
+            popup.html
+            popup.js
+            options.html
+            options.js
+            letter.js
+            compose.html
+            compose.js
+            background.js
+            icon.png
