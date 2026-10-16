@@ -2,6 +2,14 @@
 
 Browser extension (Firefox + Chrome, Manifest V3) that requests your SCHUFA data copy under Art. 15 DSGVO by opening a prefilled email to `info@schufa.de`, and reminds you when the next request is due.
 
+## Motivation
+
+I love SCHUFA, and as a Programmer, I love automating things.
+
+I also appreciate the classic German way of receiving information: by letter.
+
+This project simply brings these passions together by requesting my SCHUFA Datenkopie automatically every three months.
+
 ## What it does
 
 - Stores your personal data (name, birth date, address) in the browser's local storage — nothing leaves the browser
