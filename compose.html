@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Auskunftsersuchen an SCHUFA</title>
+  <style>
+    body { font: 14px/1.5 system-ui, sans-serif; max-width: 640px; margin: 32px auto; padding: 0 16px; }
+    pre { white-space: pre-wrap; background: #f6f6f6; padding: 16px; border-radius: 6px; }
+    button { padding: 8px 16px; cursor: pointer; }
+    #recipients { color: #555; }
+  </style>
+</head>
+<body>
+  <h1>Auskunftsersuchen nach Art. 15 DSGVO</h1>
+  <p>Bitte prüfe den Text und öffne dann dein E-Mail-Programm.</p>
+  <p id="recipients"></p>
+  <pre id="letter"></pre>
+  <button id="open">E-Mail-Programm öffnen</button>
+  <script src="letter.js"></script>
+  <script src="compose.js"></script>
+</body>
+</html>

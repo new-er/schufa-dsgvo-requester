@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>SCHUFA DSGVO Requester</title>
+  <style>
+    body { font: 13px/1.4 system-ui, sans-serif; width: 260px; margin: 0; padding: 12px; }
+    h1 { font-size: 14px; margin: 0 0 10px; }
+    button { width: 100%; padding: 8px; cursor: pointer; }
+    #open { font-weight: 600; margin-bottom: 8px; }
+    #settings { background: none; border: none; color: #06c; text-decoration: underline; padding: 4px; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .status { color: #555; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>SCHUFA DSGVO Auskunftsersuchen</h1>
+  <div class="status" id="status"></div>
+  <button id="open">E-Mail öffnen</button>
+  <button id="settings">Einstellungen</button>
+  <script src="letter.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
