@@ -24,10 +24,18 @@ This project simply brings these passions together by requesting my SCHUFA Daten
 
 ### Firefox
 
+**From Mozilla Add-ons:** [Install extension](https://addons.mozilla.org/en-US/firefox/addon/schufa-dsgvo-requester/)
+
+Or load from this repository:
+
 1. Open `about:debugging#/runtime/this-firefox`
 2. Click "Load Temporary Add-on…" and pick `manifest.json`
 
 ### Chrome
+
+**From Chrome Web Store:** [Install extension](https://chromewebstore.google.com/detail/schufa-dsgvo-requester/pdbmdihcobjamfelleebhpeicnikpifo)
+
+Or load from this repository:
 
 1. Open `chrome://extensions`
 2. Enable "Developer mode"
