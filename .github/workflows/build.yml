@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Tests
+        run: |
+          node tests/letter.test.js
+          node tests/background.test.js
+          node tests/options.test.js
+      - name: Lint
+        run: npx --yes web-ext lint
+      # keep in sync with the files the manifest references
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension
+          path: |
+            manifest.json
+            popup.html
+            popup.js
+            options.html
+            options.js
+            letter.js
+            compose.html
+            compose.js
+            background.js
+            icon.png
