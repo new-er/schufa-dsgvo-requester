@@ -14,6 +14,7 @@ This project simply brings these passions together by requesting my SCHUFA Daten
 
 - Stores your personal data (name, birth date, address) in the browser's local storage — nothing leaves the browser
 - Slim toolbar popup: due status + "E-Mail öffnen" (opens your default mail client with the letter prefilled)
+- **Toolbar icon shows status**: grey = nothing due, blue = a new request is due and ready to send
 - Full **settings/options page** (`options.html`, opens in a tab) for personal data and notification settings
 - Schedules a recurring reminder (default: every 3 months) via `browser.alarms`; when due, a notification opens a compose page with the ready-to-send letter
 - **Notification settings**: reminders can be turned off, and single vs. repeated (hourly/daily/weekly) once due

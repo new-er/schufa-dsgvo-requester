@@ -3,6 +3,7 @@ const assert = require("node:assert");
 const store = {};
 let alarm = null;
 const listeners = {};
+const icons = [];
 
 globalThis.browser = {
   storage: {
@@ -21,6 +22,7 @@ globalThis.browser = {
   },
   notifications: { create: () => {}, onClicked: { addListener: () => {} } },
   tabs: { create: () => {} },
+  action: { setIcon: (o) => icons.push(o) },
 };
 
 require("../background.js");
@@ -49,6 +51,11 @@ async function resync(changes) {
 
   store.notify_enabled = false;
   assert.strictEqual(await resync({ notify_enabled: {} }), null, "disabled -> no alarm");
+
+  assert.strictEqual(icons.at(-1).path, "icon-gray.png", "future due -> gray icon");
+  store.next_due = Date.now() - 1000;
+  await resync({ next_due: {} });
+  assert.strictEqual(icons.at(-1).path, "icon-blue.png", "past due -> blue icon");
 
   console.log("background.test.js: all assertions passed");
 })();
