@@ -25,8 +25,7 @@ openBtn.addEventListener("click", async () => {
       statusEl.textContent = "Bitte zuerst Name, Adresse usw. in den Einstellungen speichern.";
       return;
     }
-    if (!globalThis.schufa) throw new Error("letter.js nicht geladen");
-    await globalThis.schufa.requestViaMailto(api, data);
+    await api.tabs.create({ url: api.runtime.getURL("compose.html") });
   } catch (err) {
     fail(err);
   }
