@@ -2,58 +2,34 @@
 "use strict";
 
 // Publishes a zipped extension to the Chrome Web Store using the Chrome Web
-// Store API. No external dependencies: signs a JWT with the built-in `crypto`
-// module to obtain an OAuth2 access token from a Google service account.
+// Store API. No external dependencies: obtains an OAuth2 access token via the
+// refresh-token grant, then uploads the zip and publishes it.
 //
 // Required env vars:
-//   CHROME_WEBSTORE_SERVICE_ACCOUNT  full JSON service-account key
+//   CHROME_WEBSTORE_CLIENT_ID        OAuth2 web-app client id
+//   CHROME_WEBSTORE_CLIENT_SECRET    OAuth2 web-app client secret
+//   CHROME_WEBSTORE_REFRESH_TOKEN    refresh token from one-time OAuth2 flow
 //   CHROME_WEBSTORE_EXTENSION_ID     Chrome Web Store item id (from the store URL)
 //   CHROME_WEBSTORE_ZIP              path to the extension zip (default: dist/schufa-dsgvo-requester.zip)
 //   CHROME_WEBSTORE_PUBLISH_TARGET   default | group (default: default)
 
-const { createSign } = require("node:crypto");
 const { readFileSync } = require("node:fs");
 const { request } = require("node:https");
 
-const SERVICE_ACCOUNT = JSON.parse(process.env.CHROME_WEBSTORE_SERVICE_ACCOUNT || "{}");
+const CLIENT_ID = process.env.CHROME_WEBSTORE_CLIENT_ID;
+const CLIENT_SECRET = process.env.CHROME_WEBSTORE_CLIENT_SECRET;
+const REFRESH_TOKEN = process.env.CHROME_WEBSTORE_REFRESH_TOKEN;
 const EXTENSION_ID = process.env.CHROME_WEBSTORE_EXTENSION_ID;
 const ZIP_PATH = process.env.CHROME_WEBSTORE_ZIP || "dist/schufa-dsgvo-requester.zip";
 const PUBLISH_TARGET = process.env.CHROME_WEBSTORE_PUBLISH_TARGET || "default";
 
-if (!SERVICE_ACCOUNT.private_key || !SERVICE_ACCOUNT.client_email) {
-  console.error("Missing/invalid CHROME_WEBSTORE_SERVICE_ACCOUNT");
+if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
+  console.error("Missing/invalid CHROME_WEBSTORE_CLIENT_ID / CLIENT_SECRET / REFRESH_TOKEN");
   process.exit(1);
 }
 if (!EXTENSION_ID) {
   console.error("Missing CHROME_WEBSTORE_EXTENSION_ID");
   process.exit(1);
-}
-
-function base64url(input) {
-  return Buffer.from(input)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
-function signJwt() {
-  const now = Math.floor(Date.now() / 1000);
-  const header = base64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
-  const payload = base64url(
-    JSON.stringify({
-      iss: SERVICE_ACCOUNT.client_email,
-      scope: "https://www.googleapis.com/auth/chromewebstore",
-      aud: "https://oauth2.googleapis.com/token",
-      exp: now + 3600,
-      iat: now,
-    })
-  );
-  const signingInput = `${header}.${payload}`;
-  const signature = createSign("RSA-SHA256")
-    .update(signingInput)
-    .sign(SERVICE_ACCOUNT.private_key, "base64");
-  return `${signingInput}.${base64url(signature)}`;
 }
 
 function fetchJson(options, body) {
@@ -64,11 +40,12 @@ function fetchJson(options, body) {
       res.on("end", () => resolve({ status: res.statusCode, body: data }));
     });
     req.on("error", reject);
-    req.end(body);
+    if (body !== undefined) req.write(body);
+    req.end();
   });
 }
 
-async function getAccessToken(jwt) {
+async function getAccessToken() {
   const res = await fetchJson(
     {
       hostname: "oauth2.googleapis.com",
@@ -76,7 +53,7 @@ async function getAccessToken(jwt) {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     },
-    `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${encodeURIComponent(jwt)}`
+    `grant_type=refresh_token&client_id=${encodeURIComponent(CLIENT_ID)}&client_secret=${encodeURIComponent(CLIENT_SECRET)}&refresh_token=${encodeURIComponent(REFRESH_TOKEN)}`
   );
 
   if (res.status !== 200) {
@@ -127,8 +104,7 @@ async function publish(token, target) {
 }
 
 (async () => {
-  const jwt = signJwt();
-  const token = await getAccessToken(jwt);
+  const token = await getAccessToken();
   const zip = readFileSync(ZIP_PATH);
   await uploadZip(token, zip);
   await publish(token, PUBLISH_TARGET);

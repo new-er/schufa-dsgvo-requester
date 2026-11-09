@@ -74,7 +74,7 @@ npx web-ext lint -s .           # validate for Firefox
 Publishing is triggered by pushing a version tag (e.g. `git tag v0.1.1 && git push origin v0.1.1`). The [`publish.yml`](.github/workflows/publish.yml) workflow zips the extension, runs the tests, then uploads to:
 
 - **Firefox AMO** via `web-ext sign` (`web-ext sign --help`) — needs `AMO_JWT_ISSUER` + `AMO_JWT_SECRET`.
-- **Chrome Web Store** via `tools/publish-chrome.js` (Chrome Web Store API) — needs `CHROME_WEBSTORE_SERVICE_ACCOUNT` + `CHROME_WEBSTORE_EXTENSION_ID`.
+- **Chrome Web Store** via `tools/publish-chrome.js` (Chrome Web Store API) — needs `CHROME_WEBSTORE_CLIENT_ID`, `CHROME_WEBSTORE_CLIENT_SECRET`, `CHROME_WEBSTORE_REFRESH_TOKEN` + `CHROME_WEBSTORE_EXTENSION_ID`.
 
 Both stores review submissions, so "uploaded" does not mean "live immediately". Bump `version` in `manifest.json` for every tag — neither store accepts a duplicate version.
 
@@ -87,8 +87,32 @@ Add these in your repository **Settings → Secrets and variables → Actions**:
 | `AMO_JWT_ISSUER` | addons.mozilla.org → your account → API keys → create a JWT key → "JWT issuer" |
 | `AMO_JWT_SECRET` | same JWT key → "JWT secret" |
 | `AMO_ADDON_ID` | (not needed) — the add-on ID comes from `manifest.json` (`browser_specific_settings.gecko.id`) |
-| `CHROME_WEBSTORE_SERVICE_ACCOUNT` | Google Cloud Console → IAM → Service Accounts → create key (JSON), enable the Chrome Web Store API for the project; paste the whole JSON file contents |
+| `CHROME_WEBSTORE_CLIENT_ID` | Google Cloud Console → APIs & Services → OAuth2 client (web app) → client id |
+| `CHROME_WEBSTORE_CLIENT_SECRET` | same OAuth2 client → client secret |
+| `CHROME_WEBSTORE_REFRESH_TOKEN` | one-time OAuth2 flow with scope `https://www.googleapis.com/auth/chromewebstore` (see below) |
 | `CHROME_WEBSTORE_EXTENSION_ID` | Chrome Web Store item id from your extension's store URL (for the current listing: `pdbmdihcobjamfelleebhpeicnikpifo`) |
+
+### Getting a refresh token (one-time)
+
+1. In Google Cloud Console, create an OAuth2 **web app** client and note its `client_id` and `client_secret`.
+2. Open this URL (replace `YOUR_CLIENT_ID`) and sign in with the Google Account that is a Chrome Web Store developer for your extension:
+
+   ```
+   https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_CLIENT_ID&redirect_uri=urn:ietf:wg:oauth:2.0:oob&scope=https://www.googleapis.com/auth/chromewebstore&response_type=code&access_type=offline&prompt=consent
+   ```
+
+3. Exchange the shown code for a refresh token:
+
+   ```bash
+   curl -X POST https://oauth2.googleapis.com/token \
+     -d code=THE_CODE \
+     -d client_id=YOUR_CLIENT_ID \
+     -d client_secret=YOUR_CLIENT_SECRET \
+     -d redirect_uri=urn:ietf:wg:oauth:2.0:oob \
+     -d grant_type=authorization_code
+   ```
+
+4. Save the response's `refresh_token` as the `CHROME_WEBSTORE_REFRESH_TOKEN` secret (it does not expire).
 
 The first Chrome upload must be seeded manually once via the Chrome Web Store developer dashboard to create the item; after that CI can update and publish it.
 
