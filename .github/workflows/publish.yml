@@ -24,7 +24,6 @@ jobs:
         env:
           AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
           AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
-          AMO_ADDON_ID: ${{ secrets.AMO_ADDON_ID }}
         run: |
           web-ext sign \
             --api-key "$AMO_JWT_ISSUER" \
@@ -32,7 +31,6 @@ jobs:
             --source-dir . \
             --artifacts-dir dist \
             --channel listed \
-            --id "${AMO_ADDON_ID:-schufa-dsgvo-requester}" \
             --no-input
 
   publish-chrome:

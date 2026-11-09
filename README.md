@@ -86,7 +86,7 @@ Add these in your repository **Settings → Secrets and variables → Actions**:
 |--------|-----------------|
 | `AMO_JWT_ISSUER` | addons.mozilla.org → your account → API keys → create a JWT key → "JWT issuer" |
 | `AMO_JWT_SECRET` | same JWT key → "JWT secret" |
-| `AMO_ADDON_ID` | (optional) Firefox add-on slug/id on AMO, defaults to `schufa-dsgvo-requester` |
+| `AMO_ADDON_ID` | (not needed) — the add-on ID comes from `manifest.json` (`browser_specific_settings.gecko.id`) |
 | `CHROME_WEBSTORE_SERVICE_ACCOUNT` | Google Cloud Console → IAM → Service Accounts → create key (JSON), enable the Chrome Web Store API for the project; paste the whole JSON file contents |
 | `CHROME_WEBSTORE_EXTENSION_ID` | Chrome Web Store item id from your extension's store URL (for the current listing: `pdbmdihcobjamfelleebhpeicnikpifo`) |
 
