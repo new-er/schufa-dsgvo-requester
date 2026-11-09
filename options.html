@@ -4,19 +4,72 @@
   <meta charset="utf-8">
   <title>SCHUFA DSGVO Requester – Einstellungen</title>
   <style>
-    body { font: 14px/1.5 system-ui, sans-serif; max-width: 520px; margin: 32px auto; padding: 0 16px; }
-    h1 { font-size: 18px; margin: 0 0 20px; }
-    h2 { font-size: 14px; margin: 24px 0 12px; }
-    label { display: block; margin-bottom: 12px; }
-    label span { display: block; color: #555; }
-    input, select { width: 100%; box-sizing: border-box; padding: 6px; }
+    :root {
+      --bg: #fff;
+      --fg: #1a1a1a;
+      --muted: #555;
+      --hint: #777;
+      --border: #ddd;
+      --surface: #f6f6f6;
+      --input-bg: #fff;
+      --input-border: #ccc;
+      --button-bg: #e7e7e7;
+      --button-fg: #1a1a1a;
+      --button-hover: #d4d4d4;
+      --accent: #06c;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a1a;
+        --fg: #e5e5e5;
+        --muted: #999;
+        --hint: #777;
+        --border: #333;
+        --surface: #2a2a2a;
+        --input-bg: #2a2a2a;
+        --input-border: #555;
+        --button-bg: #3a3a3a;
+        --button-fg: #e5e5e5;
+        --button-hover: #4a4a4a;
+        --accent: #4a9eff;
+      }
+    }
+    body {
+      font: 14px/1.5 system-ui, sans-serif;
+      max-width: 520px;
+      margin: 32px auto;
+      padding: 0 16px;
+      background: var(--bg);
+      color: var(--fg);
+    }
+    h1 { font-size: 18px; margin: 0 0 20px; color: var(--fg); }
+    h2 { font-size: 14px; margin: 24px 0 12px; color: var(--fg); }
+    label { display: block; margin-bottom: 12px; color: var(--fg); }
+    label span { display: block; color: var(--muted); }
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px;
+      background: var(--input-bg);
+      color: var(--fg);
+      border: 1px solid var(--input-border);
+      border-radius: 4px;
+    }
     .row { display: flex; gap: 12px; }
     .row label { flex: 1; }
     .inline { display: flex; align-items: center; gap: 8px; }
     .inline input { width: auto; }
-    button { padding: 8px 18px; cursor: pointer; }
-    .status { margin-top: 12px; color: #555; }
-    .hint { color: #777; margin: -6px 0 12px; }
+    button {
+      padding: 8px 18px;
+      cursor: pointer;
+      background: var(--button-bg);
+      color: var(--button-fg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    button:hover:not(:disabled) { background: var(--button-hover); }
+    .status { margin-top: 12px; color: var(--muted); }
+    .hint { color: var(--hint); margin: -6px 0 12px; }
   </style>
 </head>
 <body>

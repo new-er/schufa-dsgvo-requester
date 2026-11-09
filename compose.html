@@ -4,10 +4,54 @@
   <meta charset="utf-8">
   <title>Auskunftsersuchen an SCHUFA</title>
   <style>
-    body { font: 14px/1.5 system-ui, sans-serif; max-width: 640px; margin: 32px auto; padding: 0 16px; }
-    pre { white-space: pre-wrap; background: #f6f6f6; padding: 16px; border-radius: 6px; }
-    button { padding: 8px 16px; cursor: pointer; }
-    #recipients { color: #555; }
+    :root {
+      --bg: #fff;
+      --fg: #1a1a1a;
+      --muted: #555;
+      --border: #ddd;
+      --surface: #f6f6f6;
+      --button-bg: #e7e7e7;
+      --button-fg: #1a1a1a;
+      --button-hover: #d4d4d4;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a1a;
+        --fg: #e5e5e5;
+        --muted: #999;
+        --border: #333;
+        --surface: #2a2a2a;
+        --button-bg: #3a3a3a;
+        --button-fg: #e5e5e5;
+        --button-hover: #4a4a4a;
+      }
+    }
+    body {
+      font: 14px/1.5 system-ui, sans-serif;
+      max-width: 640px;
+      margin: 32px auto;
+      padding: 0 16px;
+      background: var(--bg);
+      color: var(--fg);
+    }
+    pre {
+      white-space: pre-wrap;
+      background: var(--surface);
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: var(--fg);
+    }
+    button {
+      padding: 8px 16px;
+      cursor: pointer;
+      background: var(--button-bg);
+      color: var(--button-fg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    button:hover:not(:disabled) { background: var(--button-hover); }
+    #recipients { color: var(--muted); }
   </style>
 </head>
 <body>
