@@ -1,2 +1,4 @@
 *.log
 web-ext-artifacts/
+
+.opencode-tmux-idle
