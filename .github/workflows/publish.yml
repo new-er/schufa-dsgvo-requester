@@ -20,27 +20,20 @@ jobs:
       - name: Install web-ext
         run: npm install --global web-ext@latest
 
-      # keep in sync with the files the manifest references
-      - name: Package extension
-        run: |
-          mkdir -p dist
-          zip -r dist/schufa-dsgvo-requester.zip \
-            manifest.json popup.html popup.js options.html options.js \
-            letter.js compose.html compose.js background.js \
-            icon.png icon-gray.png icon-blue.png
-
       - name: Publish to Firefox AMO
         env:
           AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
           AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
           AMO_ADDON_ID: ${{ secrets.AMO_ADDON_ID }}
         run: |
-          web-ext submit \
+          web-ext sign \
             --api-key "$AMO_JWT_ISSUER" \
             --api-secret "$AMO_JWT_SECRET" \
-            --source dist/schufa-dsgvo-requester.zip \
+            --source-dir . \
+            --artifacts-dir dist \
             --channel listed \
-            --id "${AMO_ADDON_ID:-schufa-dsgvo-requester}"
+            --id "${AMO_ADDON_ID:-schufa-dsgvo-requester}" \
+            --no-input
 
   publish-chrome:
     name: Publish to Chrome Web Store

@@ -73,7 +73,7 @@ npx web-ext lint -s .           # validate for Firefox
 
 Publishing is triggered by pushing a version tag (e.g. `git tag v0.1.1 && git push origin v0.1.1`). The [`publish.yml`](.github/workflows/publish.yml) workflow zips the extension, runs the tests, then uploads to:
 
-- **Firefox AMO** via `web-ext submit` (`web-ext submit --help`) — needs `AMO_JWT_ISSUER` + `AMO_JWT_SECRET`.
+- **Firefox AMO** via `web-ext sign` (`web-ext sign --help`) — needs `AMO_JWT_ISSUER` + `AMO_JWT_SECRET`.
 - **Chrome Web Store** via `tools/publish-chrome.js` (Chrome Web Store API) — needs `CHROME_WEBSTORE_SERVICE_ACCOUNT` + `CHROME_WEBSTORE_EXTENSION_ID`.
 
 Both stores review submissions, so "uploaded" does not mean "live immediately". Bump `version` in `manifest.json` for every tag — neither store accepts a duplicate version.
