@@ -36,7 +36,9 @@ const SETTINGS = ["notify_enabled", "notify_repeat", "prev_enabled"];
 function readForm() {
   const data = {};
   for (const name of ALL_FIELDS) {
-    const value = form.elements[name].value;
+    const el = form.elements[name];
+    if (!el) continue;
+    const value = el.value;
     data[name] = name === "interval_months" ? Number(value) : value;
   }
   return data;
@@ -44,7 +46,10 @@ function readForm() {
 
 function fillForm(data) {
   for (const name of ALL_FIELDS) {
-    if (data[name] !== undefined) form.elements[name].value = data[name];
+    if (data[name] === undefined) continue;
+    const el = form.elements[name];
+    if (!el) continue;
+    el.value = data[name];
   }
 }
 
