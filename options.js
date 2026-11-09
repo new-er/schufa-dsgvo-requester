@@ -30,7 +30,7 @@ const FIELDS = [
 ];
 const PREV_FIELDS = ["prev_strasse", "prev_plz", "prev_wohnort", "prev_land"];
 const RECIPIENTS = ["to_addr", "cc_addr", "bcc_addr"];
-const ALL_FIELDS = FIELDS.concat(PREV_FIELDS, RECIPIENTS);
+const ALL_FIELDS = FIELDS.concat(PREV_FIELDS, RECIPIENTS, ["last_sent"]);
 const SETTINGS = ["notify_enabled", "notify_repeat", "prev_enabled"];
 
 function readForm() {
@@ -101,6 +101,9 @@ async function init() {
     ALL_FIELDS.concat(["last_sent"]).concat(SETTINGS),
   );
   fillForm(data);
+  if (data.last_sent) {
+    form.elements.last_sent.value = new Date(data.last_sent).toISOString().slice(0, 10);
+  }
   if (DEMO) {
     for (const [name, value] of Object.entries(DEMO_DATA)) {
       if (!form.elements[name].value) form.elements[name].value = value;
