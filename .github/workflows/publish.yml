@@ -1,0 +1,69 @@
+name: Publish to Firefox AMO and Chrome Web Store
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish-firefox:
+    name: Publish to Firefox AMO
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install web-ext
+        run: npm install --global web-ext@latest
+
+      # keep in sync with the files the manifest references
+      - name: Package extension
+        run: |
+          mkdir -p dist
+          zip -r dist/schufa-dsgvo-requester.zip \
+            manifest.json popup.html popup.js options.html options.js \
+            letter.js compose.html compose.js background.js \
+            icon.png icon-gray.png icon-blue.png
+
+      - name: Publish to Firefox AMO
+        env:
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+          AMO_ADDON_ID: ${{ secrets.AMO_ADDON_ID }}
+        run: |
+          web-ext submit \
+            --api-key "$AMO_JWT_ISSUER" \
+            --api-secret "$AMO_JWT_SECRET" \
+            --source dist/schufa-dsgvo-requester.zip \
+            --channel listed \
+            --id "${AMO_ADDON_ID:-schufa-dsgvo-requester}"
+
+  publish-chrome:
+    name: Publish to Chrome Web Store
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      # keep in sync with the files the manifest references
+      - name: Package extension
+        run: |
+          mkdir -p dist
+          zip -r dist/schufa-dsgvo-requester.zip \
+            manifest.json popup.html popup.js options.html options.js \
+            letter.js compose.html compose.js background.js \
+            icon.png icon-gray.png icon-blue.png
+
+      - name: Publish to Chrome Web Store
+        env:
+          CHROME_WEBSTORE_SERVICE_ACCOUNT: ${{ secrets.CHROME_WEBSTORE_SERVICE_ACCOUNT }}
+          CHROME_WEBSTORE_EXTENSION_ID: ${{ secrets.CHROME_WEBSTORE_EXTENSION_ID }}
+        run: node tools/publish-chrome.js

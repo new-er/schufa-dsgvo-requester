@@ -69,5 +69,28 @@ node tests/options.test.js      # settings persistence self-checks
 npx web-ext lint -s .           # validate for Firefox
 ```
 
+## Publishing (CI/CD)
+
+Publishing is triggered by pushing a version tag (e.g. `git tag v0.1.1 && git push origin v0.1.1`). The [`publish.yml`](.github/workflows/publish.yml) workflow zips the extension, runs the tests, then uploads to:
+
+- **Firefox AMO** via `web-ext submit` (`web-ext submit --help`) — needs `AMO_JWT_ISSUER` + `AMO_JWT_SECRET`.
+- **Chrome Web Store** via `tools/publish-chrome.js` (Chrome Web Store API) — needs `CHROME_WEBSTORE_SERVICE_ACCOUNT` + `CHROME_WEBSTORE_EXTENSION_ID`.
+
+Both stores review submissions, so "uploaded" does not mean "live immediately". Bump `version` in `manifest.json` for every tag — neither store accepts a duplicate version.
+
+### CI/CD secret variables
+
+Add these in your repository **Settings → Secrets and variables → Actions**:
+
+| Secret | Where to get it |
+|--------|-----------------|
+| `AMO_JWT_ISSUER` | addons.mozilla.org → your account → API keys → create a JWT key → "JWT issuer" |
+| `AMO_JWT_SECRET` | same JWT key → "JWT secret" |
+| `AMO_ADDON_ID` | (optional) Firefox add-on slug/id on AMO, defaults to `schufa-dsgvo-requester` |
+| `CHROME_WEBSTORE_SERVICE_ACCOUNT` | Google Cloud Console → IAM → Service Accounts → create key (JSON), enable the Chrome Web Store API for the project; paste the whole JSON file contents |
+| `CHROME_WEBSTORE_EXTENSION_ID` | Chrome Web Store item id from your extension's store URL (for the current listing: `pdbmdihcobjamfelleebhpeicnikpifo`) |
+
+The first Chrome upload must be seeded manually once via the Chrome Web Store developer dashboard to create the item; after that CI can update and publish it.
+
 Open the options page with a `?demo` query string to seed empty fields with sample data (e.g. from the extension console: `browser.tabs.create({ url: browser.runtime.getURL("options.html?demo") })`).
 
