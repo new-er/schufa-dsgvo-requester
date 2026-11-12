@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SCHUFA DSGVO Requester",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Request your SCHUFA data copy (Art. 15 DSGVO) via a prefilled email, with a recurring reminder.",
   "permissions": ["storage", "alarms", "notifications"],
   "icons": {

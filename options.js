@@ -94,7 +94,12 @@ function fail(err) {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
-    await api.storage.local.set({ ...readForm(), ...readSettings() });
+    const data = { ...readForm(), ...readSettings() };
+    if (data.last_sent) {
+      const due = globalThis.schufa?.nextDueDate(data.last_sent, data.interval_months || 3);
+      if (due) data.next_due = due.getTime();
+    }
+    await api.storage.local.set(data);
     statusEl.textContent = "Gespeichert ✓";
   } catch (err) {
     fail(err);
